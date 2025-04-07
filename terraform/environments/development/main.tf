@@ -40,15 +40,10 @@ module "elastic_beanstalk" {
   env_vars = {
     NODE_ENV        = "development"
     MONGODB_URI     = module.mongodb_atlas.connection_string
-    JWT_SECRET      = var.jwt_secret
     JWT_EXPIRATION  = "3600"
     HTTP_PORT       = "3003"
     TCP_PORT        = "3002"
     PORT            = "3000"
-    STRIPE_SECRET_KEY = var.stripe_secret_key
-    GOOGLE_OAUTH_CLIENT_ID = var.google_oauth_client_id
-    GOOGLE_OAUTH_CLIENT_SECRET = var.google_oauth_client_secret
-    GOOGLE_OAUTH_REFRESH_TOKEN = var.google_oauth_refresh_token
   }
 }
 

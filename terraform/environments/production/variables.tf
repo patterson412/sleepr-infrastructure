@@ -83,33 +83,3 @@ variable "mongodb_atlas_org_id" {
   type        = string
   sensitive   = true
 }
-
-variable "jwt_secret" {
-  description = "Secret key for JWT authentication"
-  type        = string
-  sensitive   = true
-}
-
-variable "stripe_secret_key" {
-  description = "Stripe API secret key"
-  type        = string
-  sensitive   = true
-}
-
-variable "google_oauth_client_id" {
-  description = "Google OAuth client ID"
-  type        = string
-  sensitive   = true
-}
-
-variable "google_oauth_client_secret" {
-  description = "Google OAuth client secret"
-  type        = string
-  sensitive   = true
-}
-
-variable "google_oauth_refresh_token" {
-  description = "Google OAuth refresh token"
-  type        = string
-  sensitive   = true
-}
