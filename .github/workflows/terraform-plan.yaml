@@ -43,11 +43,6 @@ jobs:
           TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
           TF_VAR_mongodb_atlas_org_id: ${{ secrets.MONGODB_ATLAS_ORG_ID }}
           TF_VAR_mongodb_user_password: ${{ secrets.MONGODB_USER_PASSWORD }}
-          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
-          TF_VAR_stripe_secret_key: ${{ secrets.STRIPE_SECRET_KEY }}
-          TF_VAR_google_oauth_client_id: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
-          TF_VAR_google_oauth_client_secret: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
-          TF_VAR_google_oauth_refresh_token: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
 
       - name: Terraform Plan (Development)
         id: plan-dev
@@ -58,11 +53,6 @@ jobs:
           TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
           TF_VAR_mongodb_atlas_org_id: ${{ secrets.MONGODB_ATLAS_ORG_ID }}
           TF_VAR_mongodb_user_password: ${{ secrets.MONGODB_USER_PASSWORD }}
-          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
-          TF_VAR_stripe_secret_key: ${{ secrets.STRIPE_SECRET_KEY }}
-          TF_VAR_google_oauth_client_id: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
-          TF_VAR_google_oauth_client_secret: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
-          TF_VAR_google_oauth_refresh_token: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
 
       - name: Add Plan Comment (Development)
         uses: actions/github-script@v6
@@ -117,11 +107,6 @@ jobs:
           TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
           TF_VAR_mongodb_atlas_org_id: ${{ secrets.MONGODB_ATLAS_ORG_ID }}
           TF_VAR_mongodb_user_password: ${{ secrets.MONGODB_USER_PASSWORD }}
-          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
-          TF_VAR_stripe_secret_key: ${{ secrets.STRIPE_SECRET_KEY }}
-          TF_VAR_google_oauth_client_id: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
-          TF_VAR_google_oauth_client_secret: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
-          TF_VAR_google_oauth_refresh_token: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
 
       - name: Terraform Plan (Production)
         id: plan-prod
@@ -132,11 +117,6 @@ jobs:
           TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
           TF_VAR_mongodb_atlas_org_id: ${{ secrets.MONGODB_ATLAS_ORG_ID }}
           TF_VAR_mongodb_user_password: ${{ secrets.MONGODB_USER_PASSWORD }}
-          TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
-          TF_VAR_stripe_secret_key: ${{ secrets.STRIPE_SECRET_KEY }}
-          TF_VAR_google_oauth_client_id: ${{ secrets.GOOGLE_OAUTH_CLIENT_ID }}
-          TF_VAR_google_oauth_client_secret: ${{ secrets.GOOGLE_OAUTH_CLIENT_SECRET }}
-          TF_VAR_google_oauth_refresh_token: ${{ secrets.GOOGLE_OAUTH_REFRESH_TOKEN }}
 
       - name: Add Plan Comment (Production)
         uses: actions/github-script@v6

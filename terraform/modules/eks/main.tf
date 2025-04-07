@@ -113,59 +113,5 @@ resource "kubernetes_namespace" "sleepr" {
   }
 }
 
-# Create necessary Kubernetes secrets
-resource "kubernetes_secret" "mongodb" {
-  depends_on = [kubernetes_namespace.sleepr]
-
-  metadata {
-    name      = "mongodb"
-    namespace = "sleepr"
-  }
-
-  data = {
-    connectionString = var.mongodb_connection_string
-  }
-}
-
-resource "kubernetes_secret" "jwt" {
-  depends_on = [kubernetes_namespace.sleepr]
-
-  metadata {
-    name      = "jwt"
-    namespace = "sleepr"
-  }
-
-  data = {
-    jwtSecret = var.jwt_secret
-  }
-}
-
-resource "kubernetes_secret" "stripe" {
-  depends_on = [kubernetes_namespace.sleepr]
-
-  metadata {
-    name      = "stripe"
-    namespace = "sleepr"
-  }
-
-  data = {
-    apiKey = var.stripe_secret_key
-  }
-}
-
-resource "kubernetes_secret" "google" {
-  depends_on = [kubernetes_namespace.sleepr]
-
-  metadata {
-    name      = "google"
-    namespace = "sleepr"
-  }
-
-  data = {
-    clientSecret   = var.google_oauth_client_secret
-    refreshToken   = var.google_oauth_refresh_token
-  }
-}
-
 # Get current AWS region
 data "aws_region" "current" {}
