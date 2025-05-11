@@ -5,7 +5,7 @@ provider "aws" {
 module "networking" {
   source = "../../modules/networking"
 
-  environment       = "production"
+  environment       = "development"
   vpc_cidr          = var.vpc_cidr
   availability_zones = var.availability_zones
   private_subnets   = var.private_subnets
@@ -26,8 +26,8 @@ module "ecr" {
 module "eks" {
   source = "../../modules/eks"
 
-  cluster_name      = "sleepr-production"
-  environment       = "production"
+  cluster_name      = "sleepr-development"
+  environment       = "development"
   vpc_id            = module.networking.vpc_id
   private_subnet_ids = module.networking.private_subnet_ids
   eks_version       = var.eks_version
@@ -51,7 +51,7 @@ module "mongodb_atlas" {
   source = "../../modules/mongodb-atlas"
 
   project_name  = var.mongodb_project_name
-  environment   = "production"
+  environment   = "development"
   cluster_type  = var.mongodb_cluster_type
   instance_size = var.mongodb_instance_size
   mongodb_version = var.mongodb_version
