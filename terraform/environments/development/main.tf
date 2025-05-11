@@ -5,7 +5,7 @@ provider "aws" {
 module "networking" {
   source = "../../modules/networking"
 
-  environment       = "development"
+  environment       = "production"
   vpc_cidr          = var.vpc_cidr
   availability_zones = var.availability_zones
   private_subnets   = var.private_subnets
@@ -23,27 +23,26 @@ module "ecr" {
   ]
 }
 
-# Elastic Beanstalk for development environment
-module "elastic_beanstalk" {
-  source = "../../modules/elastic-beanstalk"
+module "eks" {
+  source = "../../modules/eks"
 
-  application_name = "sleepr"
-  environment      = "development"
-  vpc_id           = module.networking.vpc_id
-  public_subnet_ids = module.networking.public_subnet_ids
-  instance_type    = var.instance_type
-  min_size         = var.min_size
-  max_size         = var.max_size
-  solution_stack_name = var.solution_stack_name
+  cluster_name      = "sleepr-production"
+  environment       = "production"
+  vpc_id            = module.networking.vpc_id
+  private_subnet_ids = module.networking.private_subnet_ids
+  eks_version       = var.eks_version
   
-  # Environment variables for the application
-  env_vars = {
-    NODE_ENV        = "development"
-    MONGODB_URI     = module.mongodb_atlas.connection_string
-    JWT_EXPIRATION  = "3600"
-    HTTP_PORT       = "3003"
-    TCP_PORT        = "3002"
-    PORT            = "3000"
+  # Fargate profiles for each namespace
+  fargate_profiles = {
+    sleepr = {
+      name = "sleepr"
+      selectors = [
+        {
+          namespace = "sleepr"
+          labels = {}
+        }
+      ]
+    }
   }
 }
 
@@ -52,7 +51,7 @@ module "mongodb_atlas" {
   source = "../../modules/mongodb-atlas"
 
   project_name  = var.mongodb_project_name
-  environment   = "development"
+  environment   = "production"
   cluster_type  = var.mongodb_cluster_type
   instance_size = var.mongodb_instance_size
   mongodb_version = var.mongodb_version

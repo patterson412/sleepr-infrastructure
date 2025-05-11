@@ -28,29 +28,10 @@ variable "public_subnets" {
   default     = ["10.1.101.0/24", "10.1.102.0/24", "10.1.103.0/24"]
 }
 
-# Elastic Beanstalk variables
-variable "instance_type" {
-  description = "EC2 instance type for Elastic Beanstalk"
+variable "eks_version" {
+  description = "Kubernetes version for EKS cluster"
   type        = string
-  default     = "t3.small"
-}
-
-variable "min_size" {
-  description = "Minimum number of EC2 instances"
-  type        = number
-  default     = 1
-}
-
-variable "max_size" {
-  description = "Maximum number of EC2 instances"
-  type        = number
-  default     = 2
-}
-
-variable "solution_stack_name" {
-  description = "Elastic Beanstalk solution stack name"
-  type        = string
-  default     = "64bit Amazon Linux 2023 v6.0.0 running Node.js 20"
+  default     = "1.28"
 }
 
 # MongoDB Atlas variables
