@@ -21,5 +21,5 @@ variable "vpc_id" {
 variable "chart_version" {
   description = "Version of the Helm chart to deploy"
   type        = string
-  default     = "1.6.0"  # Use the latest version available
+  default     = "1.6.0"
 }
