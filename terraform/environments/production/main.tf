@@ -78,4 +78,9 @@ module "mongodb_atlas" {
   mongodb_version = var.mongodb_version
   region        = var.mongodb_region
   cloud_provider = "AWS"
+
+  mongodb_atlas_public_key = var.mongodb_atlas_public_key
+  mongodb_atlas_private_key = var.mongodb_atlas_private_key
+  mongodb_atlas_org_id = var.mongodb_atlas_org_id
+  mongodb_user_password = var.mongodb_user_password
 }

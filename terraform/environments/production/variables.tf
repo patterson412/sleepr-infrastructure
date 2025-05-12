@@ -83,3 +83,9 @@ variable "mongodb_atlas_org_id" {
   type        = string
   sensitive   = true
 }
+
+variable "mongodb_user_password" {
+  description = "MongoDB Atlas user password"
+  type        = string
+  sensitive   = true
+}
