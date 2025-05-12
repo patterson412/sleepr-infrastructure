@@ -2,6 +2,27 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "helm" {
+  kubernetes {
+    host                   = module.eks.cluster_endpoint
+    cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+    exec {
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+      command     = "aws"
+    }
+  }
+}
+
+module "aws_load_balancer_controller" {
+  source = "../../modules/aws-load-balancer-controller"
+
+  cluster_name             = module.eks.cluster_id
+  cluster_oidc_provider_arn = module.eks.oidc_provider_arn
+  region                   = var.aws_region
+  vpc_id                   = module.networking.vpc_id
+}
+
 module "networking" {
   source = "../../modules/networking"
 
