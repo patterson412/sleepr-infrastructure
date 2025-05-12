@@ -27,14 +27,28 @@ resource "mongodbatlas_cluster" "cluster" {
   provider_region_name  = var.region
   provider_instance_size_name = var.instance_size
 
+  cluster_type = "REPLICASET"
+
   # MongoDB version
   mongo_db_major_version = var.mongodb_version
 
   # Auto-scaling configuration
   auto_scaling_disk_gb_enabled = true
 
-  # Backup configuration - Enable for production environments
-  backup_enabled = var.environment == "production" ? true : false
+  # For M0 free tier, cloud_backup should be false (not supported)
+  # For other tiers, we can set based on environment
+  cloud_backup = var.instance_size == "M0" ? false : var.environment == "production"
+
+  # Add explicit replication specs
+  replication_specs {
+    num_shards = 1
+    regions_config {
+      region_name     = var.region
+      electable_nodes = 3
+      priority        = 7
+      read_only_nodes = 0
+    }
+  }
 }
 
 # Create a MongoDB Atlas database user
