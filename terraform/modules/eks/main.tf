@@ -110,6 +110,10 @@ resource "kubernetes_namespace" "sleepr" {
 
   metadata {
     name = "sleepr"
+    labels = {
+      name = "sleepr"
+      environment = var.environment
+    }
   }
 }
 
