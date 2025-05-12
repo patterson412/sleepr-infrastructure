@@ -27,3 +27,8 @@ output "kubeconfig_command" {
   description = "kubectl command to update kubeconfig"
   value       = "aws eks update-kubeconfig --name ${aws_eks_cluster.main.name} --region ${data.aws_region.current.name}"
 }
+
+output "cluster_certificate_authority_data" {
+  description = "Base64 encoded certificate data required for communication with the cluster"
+  value       = aws_eks_cluster.main.certificate_authority[0].data
+}

@@ -7,25 +7,27 @@ resource "aws_ecr_repository" "repository" {
   image_scanning_configuration {
     scan_on_push = true
   }
+}
+
+# Add this as a separate resource
+resource "aws_ecr_lifecycle_policy" "policy" {
+  for_each = toset(var.repositories)
   
-  # Lifecycle policy to keep only the latest 10 images
-  # This helps control costs and keep the repository clean
-  lifecycle_policy {
-    policy = jsonencode({
-      rules = [
-        {
-          rulePriority = 1,
-          description  = "Keep last 10 images",
-          selection = {
-            tagStatus     = "any",
-            countType     = "imageCountMoreThan",
-            countNumber   = 10
-          },
-          action = {
-            type = "expire"
-          }
+  repository = aws_ecr_repository.repository[each.key].name
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1,
+        description  = "Keep last 10 images",
+        selection = {
+          tagStatus     = "any",
+          countType     = "imageCountMoreThan",
+          countNumber   = 10
+        },
+        action = {
+          type = "expire"
         }
-      ]
-    })
-  }
+      }
+    ]
+  })
 }

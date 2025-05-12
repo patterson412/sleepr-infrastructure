@@ -34,12 +34,7 @@ resource "mongodbatlas_cluster" "cluster" {
   auto_scaling_disk_gb_enabled = true
 
   # Backup configuration - Enable for production environments
-  dynamic "backup_enabled" {
-    for_each = var.environment == "production" ? [1] : []
-    content {
-      enabled = true
-    }
-  }
+  backup_enabled = var.environment == "production" ? true : false
 }
 
 # Create a MongoDB Atlas database user
