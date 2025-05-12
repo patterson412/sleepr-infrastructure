@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "us-east-1"  # Choose the region that best fits your requirements
+  region = "us-east-1"
 }
 
 # S3 bucket for Terraform state
