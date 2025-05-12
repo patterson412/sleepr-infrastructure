@@ -22,7 +22,7 @@ variable "instance_size" {
 variable "mongodb_version" {
   description = "MongoDB version"
   type        = string
-  default     = "6.0"
+  default     = "7.0"
 }
 
 variable "region" {
