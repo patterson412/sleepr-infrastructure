@@ -149,7 +149,7 @@ module "eks_blueprints_addons" {
   cluster_version   = var.eks_version
   oidc_provider_arn = module.eks.oidc_provider_arn
 
-  # Only enable what you need
+  # Only enabling load balance controller
   enable_aws_load_balancer_controller = true
   
   # These parameters need default values to prevent null reference errors
