@@ -84,6 +84,14 @@ module "eks" {
   
   cluster_name    = "sleepr-production"
   cluster_version = var.eks_version
+
+  # Disable CloudWatch logs
+  create_cloudwatch_log_group = false
+  cluster_enabled_log_types   = []  # Disable all logging types
+  
+  # Disable KMS key and encryption
+  create_kms_key              = false
+  cluster_encryption_config   = {}  # Disable encryption config
   
   vpc_id     = module.networking.vpc_id
   subnet_ids = module.networking.private_subnet_ids
