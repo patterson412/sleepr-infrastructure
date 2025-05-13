@@ -130,19 +130,28 @@ module "eks" {
   }
 }
 
-# Using EKS Blueprints Addons for AWS Load Balancer Controller
+# Add the EKS Blueprints Addons module exactly per docs, 
+# but with only AWS Load Balancer Controller enabled
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0"
 
   cluster_name      = module.eks.cluster_id
   cluster_endpoint  = module.eks.cluster_endpoint
-  cluster_version   = module.eks.cluster_version
+  cluster_version   = var.eks_version
   oidc_provider_arn = module.eks.oidc_provider_arn
 
-  # Enable AWS Load Balancer Controller
+  # Only enable what you need
   enable_aws_load_balancer_controller = true
-
+  
+  # These parameters need default values to prevent null reference errors
+  aws_for_fluentbit_cw_log_group = {}
+  aws_node_termination_handler_sqs = {}
+  fargate_fluentbit = {}
+  fargate_fluentbit_cw_log_group = {}
+  karpenter_node = {}
+  karpenter_sqs = {}
+  
   tags = {
     Environment = "development"
   }
