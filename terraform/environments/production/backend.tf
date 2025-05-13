@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.11.3"
+
   backend "s3" {
     bucket         = "sleepr-terraform-state"
     key            = "production/terraform.tfstate"

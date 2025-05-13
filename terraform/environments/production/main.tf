@@ -1,5 +1,47 @@
+terraform {
+  required_version = ">= 1.11.3"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"         # Allows any AWS provider version 5.x (5.0.0 through 5.999.999)
+                                 # This is more flexible to accommodate AWS service updates
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes" 
+      version = "~> 2.36.0"      # Only allows patch updates (2.36.0, 2.36.1, etc.) but not 2.37.0+
+                                 # Strictly controls Kubernetes provider for cluster stability
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 2.17.0"      # Only allows patch updates (2.17.0, 2.17.1, etc.) but not 2.18.0+
+                                 # Ensures Helm charts install consistently with only bug fixes
+    }
+    mongodbatlas = {
+      source  = "mongodb/mongodbatlas"
+      version = "~> 1.34.0"      # Only allows patch updates (1.34.0, 1.34.1, etc.) but not 1.35.0+
+                                 # Ensures MongoDB Atlas resources remain stable with only bug fixes
+    }
+  }
+}
+
 provider "aws" {
   region = var.aws_region
+}
+
+provider "mongodbatlas" {
+  public_key  = var.mongodb_atlas_public_key
+  private_key = var.mongodb_atlas_private_key
+}
+
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+    command     = "aws"
+  }
 }
 
 provider "helm" {
@@ -12,15 +54,6 @@ provider "helm" {
       command     = "aws"
     }
   }
-}
-
-module "aws_load_balancer_controller" {
-  source = "../../modules/aws-load-balancer-controller"
-
-  cluster_name             = module.eks.cluster_id
-  cluster_oidc_provider_arn = module.eks.oidc_provider_arn
-  region                   = var.aws_region
-  vpc_id                   = module.networking.vpc_id
 }
 
 module "networking" {
@@ -44,25 +77,82 @@ module "ecr" {
   ]
 }
 
+# Replaced custom EKS module with official AWS module
 module "eks" {
-  source = "../../modules/eks"
-
-  cluster_name      = "sleepr-production"
-  environment       = "production"
-  vpc_id            = module.networking.vpc_id
-  private_subnet_ids = module.networking.private_subnet_ids
-  eks_version       = var.eks_version
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
   
-  # Fargate profiles for each namespace
+  cluster_name    = "sleepr-production"
+  cluster_version = var.eks_version
+  
+  vpc_id     = module.networking.vpc_id
+  subnet_ids = module.networking.private_subnet_ids
+  
+  # EKS Addons with Fargate support
+  cluster_addons = {
+    coredns = {
+      configuration_values = jsonencode({
+        computeType = "Fargate"
+        resources = {
+          limits = {
+            cpu = "0.25"
+            memory = "256M"
+          }
+          requests = {
+            cpu = "0.25"
+            memory = "256M"
+          }
+        }
+      })
+    }
+    kube-proxy = {}
+    vpc-cni    = {}
+  }
+  
+  # Fargate profiles
   fargate_profiles = {
+    kube_system = {
+      name = "kube-system"
+      selectors = [
+        { namespace = "kube-system" }
+      ]
+    }
     sleepr = {
       name = "sleepr"
       selectors = [
-        {
-          namespace = "sleepr"
-          labels = {}
-        }
+        { namespace = "sleepr" }
       ]
+    }
+  }
+  
+  tags = {
+    Environment = "production"
+  }
+}
+
+# Using the AWS Load Balancer Controller module from EKS module
+module "aws_load_balancer_controller" {
+  source = "terraform-aws-modules/eks/aws//modules/aws-load-balancer-controller"
+  
+  cluster_name = module.eks.cluster_id
+  
+  # Use the OIDC provider created by the EKS module
+  cluster_identity_oidc_issuer     = module.eks.cluster_oidc_issuer_url
+  cluster_identity_oidc_issuer_arn = module.eks.oidc_provider_arn
+  
+  # Needed for helm_release resource
+  region = var.aws_region
+}
+
+# Create the sleepr namespace
+resource "kubernetes_namespace" "sleepr" {
+  depends_on = [module.eks]
+  
+  metadata {
+    name = "sleepr"
+    labels = {
+      name = "sleepr"
+      environment = "production"
     }
   }
 }

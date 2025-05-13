@@ -7,11 +7,6 @@ terraform {
   }
 }
 
-provider "mongodbatlas" {
-  public_key  = var.mongodb_atlas_public_key
-  private_key = var.mongodb_atlas_private_key
-}
-
 resource "mongodbatlas_project" "project" {
   name   = "${var.project_name}-${var.environment}"
   org_id = var.mongodb_atlas_org_id
