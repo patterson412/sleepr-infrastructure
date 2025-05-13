@@ -91,6 +91,36 @@ module "eks" {
 
   authentication_mode = "API_AND_CONFIG_MAP"
 
+  access_entries = {
+    admin_user = {
+      principal_arn = "arn:aws:iam::339713061605:root"  # Your AWS account
+      type          = "STANDARD"  # Required and must be one of the specific types
+      
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"  # Gives access to the entire cluster
+          }
+        }
+      }
+    }
+    
+    github_actions = {
+      principal_arn = "arn:aws:iam::339713061605:role/github-actions-terraform-role"
+      type          = "STANDARD"
+      
+      policy_associations = {
+        admin = {
+          policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+          access_scope = {
+            type = "cluster"
+          }
+        }
+      }
+    }
+  }
+
   # Disable CloudWatch logs
   create_cloudwatch_log_group = false
   cluster_enabled_log_types   = []  # Disable all logging types
