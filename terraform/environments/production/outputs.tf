@@ -88,3 +88,9 @@ output "ecr_repository_arns" {
   description = "ARNs of the ECR repositories"
   value       = module.ecr.repository_arns
 }
+
+# EKS Blueprints Addons Output
+output "aws_load_balancer_controller" {
+  description = "Map of attributes of the Helm release and IRSA created for AWS Load Balancer Controller"
+  value       = module.eks_blueprints_addons.aws_load_balancer_controller
+}

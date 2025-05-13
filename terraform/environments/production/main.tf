@@ -130,18 +130,22 @@ module "eks" {
   }
 }
 
-# Using the AWS Load Balancer Controller module from EKS module
-module "aws_load_balancer_controller" {
-  source = "terraform-aws-modules/eks/aws//modules/aws-load-balancer-controller"
-  
-  cluster_name = module.eks.cluster_id
-  
-  # Use the OIDC provider created by the EKS module
-  cluster_identity_oidc_issuer     = module.eks.cluster_oidc_issuer_url
-  cluster_identity_oidc_issuer_arn = module.eks.oidc_provider_arn
-  
-  # Needed for helm_release resource
-  region = var.aws_region
+# Using EKS Blueprints Addons for AWS Load Balancer Controller
+module "eks_blueprints_addons" {
+  source  = "aws-ia/eks-blueprints-addons/aws"
+  version = "~> 1.0"
+
+  cluster_name      = module.eks.cluster_id
+  cluster_endpoint  = module.eks.cluster_endpoint
+  cluster_version   = module.eks.cluster_version
+  oidc_provider_arn = module.eks.oidc_provider_arn
+
+  # Enable AWS Load Balancer Controller
+  enable_aws_load_balancer_controller = true
+
+  tags = {
+    Environment = "production"
+  }
 }
 
 # Create the sleepr namespace
