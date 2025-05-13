@@ -90,6 +90,8 @@ module "eks" {
   cluster_endpoint_public_access = true
   cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
 
+  authentication_mode = "API_AND_CONFIG_MAP"
+
   # Disable CloudWatch logs
   create_cloudwatch_log_group = false
   cluster_enabled_log_types   = []  # Disable all logging types
@@ -147,6 +149,8 @@ module "eks" {
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0"
+
+  depends_on = [module.eks]
 
   cluster_name      = "sleepr-development"
   cluster_endpoint  = module.eks.cluster_endpoint
