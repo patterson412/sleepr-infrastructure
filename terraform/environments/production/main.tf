@@ -34,23 +34,25 @@ provider "mongodbatlas" {
   private_key = var.mongodb_atlas_private_key
 }
 
+# kubernetes provider
 provider "kubernetes" {
   host                   = module.eks.cluster_endpoint
   cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
   exec {
     api_version = "client.authentication.k8s.io/v1beta1"
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+    args        = ["eks", "get-token", "--cluster-name", "sleepr-production"]
     command     = "aws"
   }
 }
 
+# helm provider
 provider "helm" {
   kubernetes {
     host                   = module.eks.cluster_endpoint
     cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
-      args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_id]
+      args        = ["eks", "get-token", "--cluster-name", "sleepr-production"]
       command     = "aws"
     }
   }
@@ -138,27 +140,17 @@ module "eks" {
   }
 }
 
-# Add the EKS Blueprints Addons module exactly per docs, 
-# but with only AWS Load Balancer Controller enabled
+# EKS Blueprints Addons module for load balancer controller
 module "eks_blueprints_addons" {
   source  = "aws-ia/eks-blueprints-addons/aws"
   version = "~> 1.0"
 
-  cluster_name      = module.eks.cluster_id
+  cluster_name      = "sleepr-production"
   cluster_endpoint  = module.eks.cluster_endpoint
   cluster_version   = var.eks_version
   oidc_provider_arn = module.eks.oidc_provider_arn
 
-  # Only enable what you need
   enable_aws_load_balancer_controller = true
-  
-  # These parameters need default values to prevent null reference errors
-  aws_for_fluentbit_cw_log_group = {}
-  aws_node_termination_handler_sqs = {}
-  fargate_fluentbit = {}
-  fargate_fluentbit_cw_log_group = {}
-  karpenter_node = {}
-  karpenter_sqs = {}
   
   tags = {
     Environment = "production"
