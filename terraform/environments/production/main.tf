@@ -68,15 +68,21 @@ module "networking" {
   public_subnets    = var.public_subnets
 }
 
-module "ecr" {
-  source = "../../modules/ecr"
+# Data sources for existing ECR repositories
+data "aws_ecr_repository" "auth" {
+  name = "auth"
+}
 
-  repositories = [
-    "auth",
-    "notifications",
-    "payments",
-    "reservations"
-  ]
+data "aws_ecr_repository" "notifications" {
+  name = "notifications"
+}
+
+data "aws_ecr_repository" "payments" {
+  name = "payments"
+}
+
+data "aws_ecr_repository" "reservations" {
+  name = "reservations"
 }
 
 module "eks" {

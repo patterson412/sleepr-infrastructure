@@ -50,7 +50,7 @@ variable "mongodb_cluster_type" {
 variable "mongodb_instance_size" {
   description = "MongoDB Atlas instance size"
   type        = string
-  default     = "M10"  # Adjust based on your requirements
+  default     = "M10"   # Have to increase tier for production
 }
 
 variable "mongodb_version" {

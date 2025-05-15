@@ -17,12 +17,10 @@ resource "mongodbatlas_cluster" "cluster" {
   name       = "${var.project_name}-${var.environment}"
 
   # Cluster configuration
-  provider_name         = "TENANT"
-  backing_provider_name = var.cloud_provider
-  provider_region_name  = var.region
+  provider_name         = var.cloud_provider
   provider_instance_size_name = var.instance_size
 
-  cluster_type = "REPLICASET"
+  cluster_type = var.cluster_type
 
   # MongoDB version
   mongo_db_major_version = var.mongodb_version
@@ -30,11 +28,8 @@ resource "mongodbatlas_cluster" "cluster" {
   # Auto-scaling configuration
   auto_scaling_disk_gb_enabled = true
 
-  # For M0 free tier, cloud_backup should be false (not supported)
-  # For other tiers, we can set based on environment
-  cloud_backup = var.instance_size == "M0" ? false : var.environment == "production"
+  cloud_backup = true
 
-  # Add explicit replication specs
   replication_specs {
     num_shards = 1
     regions_config {

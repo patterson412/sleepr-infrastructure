@@ -78,15 +78,25 @@ output "mongodb_database_user" {
   value       = module.mongodb_atlas.database_user
 }
 
-# ECR Module Outputs
+# ECR Data Source Outputs
 output "ecr_repository_urls" {
   description = "URLs of the ECR repositories"
-  value       = module.ecr.repository_urls
+  value = {
+    auth         = data.aws_ecr_repository.auth.repository_url
+    notifications = data.aws_ecr_repository.notifications.repository_url
+    payments     = data.aws_ecr_repository.payments.repository_url
+    reservations = data.aws_ecr_repository.reservations.repository_url
+  }
 }
 
 output "ecr_repository_arns" {
   description = "ARNs of the ECR repositories"
-  value       = module.ecr.repository_arns
+  value = {
+    auth         = data.aws_ecr_repository.auth.arn
+    notifications = data.aws_ecr_repository.notifications.arn
+    payments     = data.aws_ecr_repository.payments.arn
+    reservations = data.aws_ecr_repository.reservations.arn
+  }
 }
 
 # EKS Blueprints Addons Output
